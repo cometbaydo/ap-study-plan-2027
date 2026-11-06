@@ -1,303 +1,70 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AP 备考计划 · 统计 / 生物 / 计算机 A（2027）</title>
-<style>
-  :root{--bg:#f6f7fb;--card:#fff;--ink:#1d2330;--muted:#6b7385;--line:#e3e6ee;
-        --stat:#2e75b6;--bio:#3c9a5f;--csa:#c55a11;--accent:#1f4e79}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
-  header{background:var(--accent);color:#fff;padding:20px 16px}
-  header h1{margin:0;font-size:22px}
-  header p{margin:4px 0 0;opacity:.85;font-size:14px}
-  nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-  nav button{border:1px solid var(--line);background:#fff;padding:7px 12px;border-radius:18px;cursor:pointer;font-size:14px}
-  nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-  main{max-width:1000px;margin:0 auto;padding:16px}
-  section{display:none}section.on{display:block}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .stat{font-size:28px;font-weight:700}
-  .muted{color:var(--muted);font-size:13px}
-  .bar{height:10px;background:#eceef4;border-radius:6px;overflow:hidden;margin-top:6px}
-  .bar>div{height:100%;transition:width .3s}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
-  th{background:#f0f3f9}
-  .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;color:#fff;margin-right:4px}
-  .t-stat{background:var(--stat)}.t-bio{background:var(--bio)}.t-csa{background:var(--csa)}
-  .week{border-left:4px solid var(--accent)}
-  .week.current{box-shadow:0 0 0 2px #f4b400}
-  .week h3{margin:0 0 4px;font-size:16px}
-  .task{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px dashed var(--line)}
-  .task:first-of-type{border-top:none}
-  .task input{margin-top:5px;transform:scale(1.2)}
-  .task.done span.txt{text-decoration:line-through;color:var(--muted)}
-  .q{border-left:4px solid var(--line)}
-  .q details{margin-top:8px}
-  .q summary{cursor:pointer;color:var(--accent);font-weight:600}
-  pre{background:#1e2430;color:#e6e6e6;padding:10px;border-radius:8px;overflow:auto;font-size:13px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  input[type=date]{padding:6px;border:1px solid var(--line);border-radius:6px}
-  .btn{border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:6px;cursor:pointer}
-  a{color:var(--accent)}
-  .note{background:#fff8e1;border:1px solid #f4d27a;border-radius:8px;padding:10px;font-size:13px}
-</style>
-</head>
-<body>
-<header>
-  <h1>AP 备考计划 2027</h1>
-  <p>AP Statistics（2026-27 新版）· AP Biology · AP Computer Science A　|　考纲依据 College Board 官网 CED</p>
-</header>
-<nav id="nav">
-  <button data-s="home" class="on">总览</button>
-  <button data-s="plan">每周计划</button>
-  <button data-s="syllabus">考纲</button>
-  <button data-s="practice">练习题</button>
-  <button data-s="resources">官方资源</button>
-</nav>
-<main>
-
-<!-- 总览 -->
-<section id="home" class="on">
-  <div class="card">
-    <div class="row">
-      <div><b>考试日期（可修改）：</b></div>
-      <label class="muted">统计 <input type="date" id="d-stat"></label>
-      <label class="muted">生物 <input type="date" id="d-bio"></label>
-      <label class="muted">计算机 A <input type="date" id="d-csa"></label>
-    </div>
-    <p class="muted">默认日期只是占位，正式日期请向学校 AP 协调员确认后改掉。所有勾选进度保存在本机浏览器里。</p>
-  </div>
-  <div class="grid" id="countdowns"></div>
-  <div class="card">
-    <h3 style="margin-top:0">总进度</h3>
-    <div id="overall"></div>
-  </div>
-  <div class="card" id="thisweek"></div>
-  <div class="card">
-    <h3 style="margin-top:0">四个阶段</h3>
-    <table>
-      <tr><th>阶段</th><th>时间</th><th>每周</th><th>重点</th></tr>
-      <tr><td>1 申请季·轻量入门</td><td>11/9 – 1/3</td><td>4–5 小时</td><td>统计第 1 单元；计算机 A 装环境 + 第 1 单元；生物暂停</td></tr>
-      <tr><td>2 主线学习</td><td>1/4 – 2/28</td><td>10–12 小时</td><td>统计 2–3；生物 1–4；计算机 A 2–3</td></tr>
-      <tr><td>3 补完内容 + 专项</td><td>3/1 – 3/28</td><td>12 小时</td><td>统计 4–5 + 推断题；生物 5–8；计算机 A 第 4 单元</td></tr>
-      <tr><td>4 整套模考</td><td>3/29 – 考前</td><td>12–15 小时</td><td>每门每周 1 套完整真题 + 错题复盘</td></tr>
-    </table>
-  </div>
-</section>
-
-<!-- 每周计划 -->
-<section id="plan">
-  <div class="card row">
-    <button class="btn" id="jump">跳到本周</button>
-    <label class="muted"><input type="checkbox" id="hideDone"> 隐藏已完成的周</label>
-    <button class="btn" id="reset">清空全部进度</button>
-  </div>
-  <div id="weeks"></div>
-</section>
-
-<!-- 考纲 -->
-<section id="syllabus">
-  <div class="note">统计从 2026-27 学年改版为 5 个单元；计算机 A 从 2025-26 学年改版为 4 个单元，删除了继承。练旧真题时注意跳过已不考的内容。</div>
-  <div id="syl"></div>
-</section>
-
-<!-- 练习 -->
-<section id="practice">
-  <div class="note">以下是按考纲自编的入门检测题，不是官方真题。真题请用“官方资源”里的 AP Central 历年 FRQ 和 AP Classroom。</div>
-  <div class="card row">
-    <b>筛选：</b>
-    <button class="btn" data-f="all">全部</button>
-    <button class="btn" data-f="stat">统计</button>
-    <button class="btn" data-f="bio">生物</button>
-    <button class="btn" data-f="csa">计算机 A</button>
-  </div>
-  <div id="qs"></div>
-</section>
-
-<!-- 资源 -->
-<section id="resources">
-  <div class="card">
-    <h3 style="margin-top:0">官方资源</h3>
-    <table>
-      <tr><th>资源</th><th>用途</th></tr>
-      <tr><td><a href="https://myap.collegeboard.org/login" target="_blank">AP Classroom</a></td><td>Progress Check、AP Daily 视频，按新考纲出题。需要学校老师把你加入 AP 班级。</td></tr>
-      <tr><td><a href="https://apcentral.collegeboard.org/courses/ap-statistics/exam" target="_blank">AP 统计考试页</a></td><td>考试结构、历年 FRQ 与评分标准、CED 下载</td></tr>
-      <tr><td><a href="https://apcentral.collegeboard.org/courses/ap-biology/exam" target="_blank">AP 生物考试页</a></td><td>历年 FRQ、评分标准、手写答题册样例</td></tr>
-      <tr><td><a href="https://apcentral.collegeboard.org/courses/ap-computer-science-a/exam" target="_blank">AP 计算机 A 考试页</a></td><td>历年 FRQ、评分标准</td></tr>
-      <tr><td><a href="https://apcentral.collegeboard.org/media/pdf/ap-computer-science-a-java-quick-reference.pdf" target="_blank">Java Quick Reference</a></td><td>考试时提供，平时练题就开着用</td></tr>
-      <tr><td><a href="https://apcentral.collegeboard.org/media/pdf/ap-statistics-digital-response-guidelines.pdf" target="_blank">统计机考输入指南</a></td><td>练习用键盘输入统计符号</td></tr>
-      <tr><td><a href="https://bluebook.collegeboard.org/students/practice" target="_blank">Bluebook 模考</a></td><td>熟悉机考界面，考前至少做一次完整预览</td></tr>
-      <tr><td><a href="https://secure-media.collegeboard.org/digitalServices/pdf/ap/AP_Bio_Quantitative_Skills_Guide-2ndPrinting_lkd.pdf" target="_blank">生物定量技能指南</a></td><td>数据分析、卡方检验、作图</td></tr>
-    </table>
-  </div>
-</section>
-</main>
-
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183d36"><title>AP 双科自习室 · 16 周学习计划</title><style>
+:root{--bg:#f5f4ee;--ink:#1d3732;--muted:#61736d;--line:#dce3d9;--paper:#fffef9;--green:#24594b;--orange:#ad582d;--blue:#385e86}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--blue);text-underline-offset:4px}button,input,select,textarea{font:inherit}button,.button{cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:9px 16px;background:var(--paper);color:var(--ink)}button:hover{border-color:var(--green)}button.primary{background:var(--green);color:white}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #d49f40;outline-offset:3px}header{background:#183d36;color:#f9f6e9;padding:48px max(22px,calc((100vw - 1120px)/2)) 38px;position:relative;overflow:hidden}header:after{content:'Σ / DNA';position:absolute;right:4%;top:12px;font-size:110px;font-weight:800;opacity:.045;pointer-events:none}.eyebrow{letter-spacing:3px;font-size:12px;text-transform:uppercase;color:#d0c9a6}h1{font-size:clamp(30px,5vw,50px);line-height:1.25;letter-spacing:-1px;margin:14px 0}header p{max-width:680px;color:#d5e0d4}.badge{display:inline-block;padding:3px 10px;border-radius:99px;background:#eaf0e6;color:var(--green);font-size:12px;font-weight:650}.badge.bio{background:#f5eadc;color:#87542f}nav{position:sticky;top:0;z-index:10;background:#fdfcf6ed;backdrop-filter:blur(15px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:12px max(14px,calc((100vw - 1120px)/2))}nav button{white-space:nowrap;border:0;background:transparent;font-size:14px}nav button.active{background:var(--green);color:white}main{max-width:1160px;margin:auto;padding:28px 20px 70px}section[hidden]{display:none!important}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}.card h2,.card h3{margin-top:0}h2{font-size:25px;line-height:1.4}h3{font-size:19px}h4{margin:18px 0 5px}.muted,small{color:var(--muted)}.big{font-size:36px;font-weight:750;line-height:1.3}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.row.between{justify-content:space-between}.note{padding:16px 20px;border-left:4px solid #bd8f4c;background:#faf0dc;border-radius:0 10px 10px 0;margin:18px 0;font-size:14px}.progress{height:9px;background:#e8ece4;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;background:#3c7860;transition:width .2s}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px;min-width:540px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:11px 10px;vertical-align:top}th{background:#edf1e8}input,select,textarea{border:1px solid #c9d3c8;border-radius:7px;padding:8px;background:#fffefb;color:var(--ink)}textarea{width:100%;min-height:110px;resize:vertical}label{font-size:14px}details{border-top:1px solid var(--line);padding:14px 0}summary{cursor:pointer;font-weight:650}details p{margin:10px 0}ul,ol{padding-left:23px}.unit{scroll-margin-top:90px}.unit .titleline{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.unit .titleline h3{margin-bottom:6px}.chapterbody{font-size:15px}.question{padding:16px;border-radius:10px;background:#f4f6ef;margin-top:12px}.question h4{margin-top:0}.question details{margin-top:10px;padding-bottom:0}.solution{border-left:3px solid #8bae94;padding-left:14px}.week{border-left:4px solid #7ba089;scroll-margin-top:90px}.week.current{border-color:#b57b36;box-shadow:0 0 0 1px #b57b36}.task{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}.task input{margin-top:7px;accent-color:var(--green);width:18px;height:18px;flex:none}.task.done span{text-decoration:line-through;color:var(--muted)}.weeknote{font-size:14px;color:var(--muted)}.timer{font-variant-numeric:tabular-nums;font-size:40px;font-weight:750;letter-spacing:1px}.mockitem{padding:20px 0;border-top:1px solid var(--line)}.mockitem label{display:block;padding:5px}.scoreinput{width:85px}footer{text-align:center;color:var(--muted);font-size:12px;padding:0 20px 30px}.empty{padding:20px;color:var(--muted)}.anchorlinks{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.anchorlinks a{font-size:13px;background:#eaf0e6;border-radius:7px;padding:5px 10px;text-decoration:none}#storageStatus{font-size:13px}#mockAnswers[hidden]{display:none}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:720px){.grid,.grid.four{grid-template-columns:1fr}.grid.four{grid-template-columns:1fr 1fr}.card{padding:19px}main{padding:20px 14px 50px}header{padding-top:32px}nav{padding:9px}.big{font-size:28px}.unit .titleline{display:block}.timer{font-size:34px}}@media print{nav,button,#mockControls{display:none!important}section[hidden]{display:block!important}.card{break-inside:avoid}header{background:white;color:black}header p{color:black}main{max-width:none}details{display:block}body{font-size:12px}}
+</style></head><body><header><div class="eyebrow">THE TWO-SUBJECT STUDY STUDIO / 2027</div><h1>把目标，拆成能完成的每一周。</h1><p>AP Statistics × AP Biology<br>四个月建立知识地图，用解释与练习把它变成自己的能力。</p><div class="row"><span class="badge">统计 · Fall 2026 新考纲</span><span class="badge bio">生物 · Fall 2025 考纲</span><span style="font-size:12px;color:#d0d9cb">官方资料核对：2026.11.06</span></div></header><nav aria-label="主导航"><button data-tab="home" class="active">学习总览</button><button data-tab="plan">16 周路线</button><button data-tab="chapters">13 章精讲 · 26 题</button><button data-tab="mock">计时训练</button><button data-tab="sources">官方题与来源</button></nav><main>
+<section id="home"><div class="row between"><h2>你的四个月，从这里开始</h2><span class="muted">理解 → 提取 → 应用 → 复盘</span></div><div class="card"><div class="row between"><label>计划起始日 <input id="startDate" type="date" required></label><div id="planRange" class="muted"></div></div><p class="muted">默认从2027年1月11日到5月2日，赶在生物考试前完成。可选任意起始日；Session 2 的具体开考安排请按学校通知确认。这里的“月”是连续 4 周，共 16 周 / 112 天，不是自然月。适合已修过高中基础代数和基础生物的学生；完全零基础请延长，不要用熬夜补进度。</p><div id="storageStatus" role="status"></div><p class="muted">新计划使用独立存储版本，旧版进度原样保留、不覆盖、不错误映射。日期调整不清空勾选。数据只在当前浏览器保存，不跨设备同步。</p><button id="exportData">导出当前进度备份</button></div><div class="grid four"><div class="card"><div class="muted">学习周期</div><div class="big">16 周</div><small>4 个四周阶段</small></div><div class="card"><div class="muted">建议总投入</div><div class="big">224 h</div><small>统计 110h · 生物 114h</small></div><div class="card"><div class="muted">每周可行负荷</div><div class="big">12–16 h</div><small>不含学校正常课时</small></div><div class="card"><div class="muted">任务进度</div><div class="big" id="progressNumber">0%</div><div class="progress" role="progressbar" aria-label="任务完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progressBar"></i></div><small id="progressCount"></small></div></div><div class="grid"><article class="card"><span class="badge">STATISTICS</span><h3>五单元，完整统计推理链</h3><p>从调查问题、数据收集和分布描述，到概率、比例 / 均值推断，再到回归解释。</p><p><b>42 道 MCQ · 90 分钟<br>4 道 FRQ · 90 分钟</b><br>两部分各 50%；每道 FRQ 10 分。2027 年全数字作答。<br><b>正式考试：2027年5月11日（周二）Session 2</b>。</p><a href="https://apcentral.collegeboard.org/courses/ap-statistics/exam" target="_blank" rel="noopener">官方考试结构与日期 ↗</a></article><article class="card"><span class="badge bio">BIOLOGY</span><h3>八单元，用机制解释证据</h3><p>串起分子、细胞、遗传、进化和生态。把图表、实验设计与有证据的论证贯穿每章。</p><p><b>60 道 MCQ · 90 分钟<br>6 道 FRQ · 90 分钟</b><br>两部分各 50%；2 长题各 9 分、4 短题各 4 分。混合数字考试，FRQ 手写。<br><b>正式考试：2027年5月3日（周一）Session 2</b>。</p><a href="https://apcentral.collegeboard.org/courses/ap-biology/exam" target="_blank" rel="noopener">官方考试结构与日期 ↗</a></article></div><div class="card"><h3>2027 正式考试日期</h3><p>生物：2027 年 5 月 3 日 · Session 2；统计：2027 年 5 月 11 日 · Session 2。<span id="examCountdown"></span></p><p class="muted">日期来自各科 College Board 官方考试页。具体当地开考时间、延迟考试与考点安排，以 AP 协调员通知为准；本计划起始日可自行调整。</p></div><div id="months"></div><div class="note"><b>时间不够时：</b>优先保证概念讲解、每章 2 道题、当周错题复做；题量减半但保留复盘。若连续两周正确率低于 60%，把本计划延长 2–4 周，不承诺用固定时长拿固定分数。提前完成后每周维持双科各 1–2 小时，直到实际考试；起始日晚于考前 112 天时需延长准备周期或与教师重排。</div><div class="card"><h3>每周怎么安排才不累积欠账？</h3><p>普通 14h 周：周一 / 三 / 五各 2h（双科交替），周六 4h（分成两段），周日 4h（含复盘），周二 / 四留空。12h 周从周末各减 1h；16h 周在周二 / 四各加 1h。建议 50 分钟学习 + 10 分钟休息。</p><p>每科配额内按 <b>40% 学概念、35% 做题、25% 批改与间隔复习</b>分配；模考周按表替换。选择题配额是练习目标，不代表本站提供这么多官方选择题。可用教材习题或教师授权的 AP Classroom 题；本站只提供标注的原创基础题与短卷。</p></div></section>
+<section id="plan" hidden><div class="row between"><h2>16 周，一周一张清单</h2><div class="row"><button id="jumpWeek">跳到当前周</button><label><input type="checkbox" id="hideDone"> 隐藏完成周</label></div></div><p class="muted">每周三项可勾选任务。MCQ = 选择题；FRQ = 自由作答题。配额包含在小时数内，错题复做不计入新题数。旧 FRQ 仅按主题筛选，不虚构题号。</p><div id="weeks"></div></section>
+<section id="chapters" hidden><h2>先解释清楚，再练到会</h2><p class="muted">13 个官方单元 × 2 道本站原创基础题（共 26 题）。这些是章节起点，不是完整题库，也不是 College Board 原题翻译。章节内容为依据 CED 的中文教学归纳，非逐字转载。</p><label>筛选科目 <select id="subjectFilter"><option value="all">全部 13 章</option><option value="stat">AP Statistics · 5 章</option><option value="bio">AP Biology · 8 章</option></select></label><div id="unitLinks" class="anchorlinks"></div><div id="units"></div></section>
+<section id="mock" hidden><h2>计时训练 · 不把原创当真题</h2><div class="note"><b>本站没有、也不声称拥有“2027 官方实际考卷”。</b>下列为本站原创基础短卷，按考纲训练核心能力；不等同官方难度或完整模考。完整卷蓝图是自行组卷方案，不是已提供的整套试卷。官方公开题从 CED 样题与历年 FRQ 进入；完整安全选择题通常需教师通过 AP Classroom 授权。</div><div class="card"><h3>第 13–16 周完整模考蓝图</h3><div class="tablewrap"><table><tr><th>科目</th><th>选择题蓝图（原创 / 教师授权自组）</th><th>FRQ 蓝图与时长</th></tr><tr><td>统计</td><td>42 题 / 90min。U1–U5 分配 11 / 9 / 9 / 7 / 6；其中概率共享材料 3 题、回归共享材料 3 题；每题 4 个选项。</td><td>4 题 / 90min，每题10分：调查与收集；分析与解释；推断；跨单元综合。建议 20 / 20 / 25 / 25min。</td></tr><tr><td>生物</td><td>60 题 / 90min。U1–U8 分配 6 / 7 / 8 / 7 / 6 / 8 / 10 / 8；穿插共同图表 / 实验材料题组。</td><td>6 题 / 90min：实验结果长题、含作图长题（各9分）+ 实验设计、概念、模型、数据4短题（各4分）。建议长题各25min、短题各10min。</td></tr></table></div><p>W13：统计完整自组卷 A（3h）+ 批改复做（3h）；W14：生物 A（3h）+ 批改复做（3h）；W15：统计 B（3h）+ 复盘（3h）；W16：生物 B（3h）+ 复盘（3h）。A / B 需教师、教材或合法授权资源备齐，本站不冒充已有四套完整卷。用历年 FRQ 时必须筛掉不适用内容，不能把旧统计 6 题卷直接当新版 4 题卷。</p></div><div class="card" id="mockControls"><div class="row"><label>训练类型 <select id="mockSelect"><option value="stat-mini">统计 · 原创短卷（15 分钟）</option><option value="bio-mini">生物 · 原创短卷（15 分钟）</option><option value="stat-mc">统计 · 外部自组 MCQ（90 分钟）</option><option value="stat-frq">统计 · 外部自组 FRQ（90 分钟）</option><option value="bio-mc">生物 · 外部自组 MCQ（90 分钟）</option><option value="bio-frq">生物 · 外部自组 FRQ（90 分钟）</option></select></label><button class="primary" id="startMock">开始 / 重新开始</button><button id="pauseMock" disabled>暂停</button><button id="finishMock" disabled>交卷 / 看解析</button></div><div class="row between"><div class="timer" id="clock" role="timer" aria-label="剩余时间">15:00</div><span id="timerStatus" role="status">未开始 · 开始后显示题目</span></div><p class="muted">外部自组模式只提供计时与成绩记录，先备好题卷。可暂停方便学习；若模拟真实考试，请勿暂停。切换类型不会打断当前考试，点击重新开始才切换；重开会替换当前草稿。</p></div><div class="card" id="mockPaper"><p class="muted">准备好纸笔和计算器，点击开始。</p></div><div id="mockAnswers" class="card" hidden></div><div class="card"><h3>本地成绩日志</h3><form id="scoreForm"><div class="row"><label>科目 <select id="scoreSubject"><option value="stat">统计</option><option value="bio">生物</option></select></label><label>练习名称 <input id="scoreName" required maxlength="70" placeholder="如：原创短卷 / 自组卷 A"></label><label>得分 <input class="scoreinput" id="scoreGot" type="number" min="0" step="0.5" required></label><label>满分 <input class="scoreinput" id="scoreMax" type="number" min="0.5" step="0.5" required></label><button class="primary" type="submit">保存成绩</button></div><label>下次改进 <input id="scoreNote" maxlength="180" placeholder="例：先检查独立性，再选择推断方法" style="width:100%;margin-top:12px"></label></form><p class="muted">本站百分比仅用于跟踪，不换算 AP 1–5 分；完整卷合成百分比可用 50 × MC正确/题数 + 50 × FRQ得分/满分（统计40，生物34）。官方分数线不由本站预测。</p><div id="scores"></div></div></section>
+<section id="sources" hidden><h2>官方资源，按用途打开</h2><p class="muted">核对日期：2026 年 11 月 6 日。下列链接均指向 College Board 官方来源；页面 / PDF 可能后续更新。本站不隶属于或获得 College Board 背书。</p><div class="grid"><div class="card"><h3>统计 · Fall 2026 CED</h3><p><a href="https://apcentral.collegeboard.org/media/pdf/ap-statistics-course-and-exam-description-effective-fall-2026.pdf" target="_blank" rel="noopener">官方 CED + Sample Exam Questions ↗</a><br>印刷页码 p.160 起样题；p.176 起评分示例。PDF 阅读器页码有封面偏移，请按目录定位。</p><p><a href="https://apcentral.collegeboard.org/courses/ap-statistics/future-revisions" target="_blank" rel="noopener">2026–27 修订说明 ↗</a> · <a href="https://apcentral.collegeboard.org/courses/ap-statistics/exam" target="_blank" rel="noopener">现行考试结构 ↗</a></p><p>新版不再考几何分布、随机变量组合、卡方拟合优度、回归斜率推断、偏离线性的分析。仍需学二项分布、卡方独立性 / 同质性、描述性线性回归。旧题含删除内容时跳过相应部分，不能按旧单元编号照搬。</p></div><div class="card"><h3>生物 · Fall 2025 CED</h3><p><a href="https://apcentral.collegeboard.org/media/pdf/ap-biology-course-and-exam-description.pdf" target="_blank" rel="noopener">官方 CED + Sample Exam Questions ↗</a><br>印刷页码 p.204 起样题；p.217 起评分示例。U2 官方名称现为 Cells。</p><p><a href="https://apcentral.collegeboard.org/courses/ap-biology" target="_blank" rel="noopener">官方单元与修订 / 勘误入口 ↗</a> · <a href="https://apcentral.collegeboard.org/courses/ap-biology/exam" target="_blank" rel="noopener">现行考试结构 ↗</a></p><p>把概念解释、图示、实验设计、图表描述、统计分析和论证融入练习。生物中适用的遗传卡方拟合优度仍要学；不要把统计学科的删项套到生物。</p></div></div><div class="card"><h3>2023–2026 官方 FRQ 与评分入口</h3><p>每年均链接到该科官方历年页的题目与评分栏目，由你展开对应年份后打开 Questions / Scoring Guidelines。避免猜测不存在的题号或下载地址。2023–2025 生物旧卷与 2026 前统计旧卷需按现行 CED 筛选。</p><div id="frqLinks"></div><p class="muted">建议顺序：W4 先用 CED 样题校准表达；W7–10 从 2023 / 2024 按主题挑题；W11–12 用 2025 / 2026 做综合分题；W13–16 用未做过且符合现行范围的题组或教师授权题组做计时。不是保证每年任意一道题都适配新考纲。</p></div><div class="card"><h3>资源边界与使用方法</h3><p><a href="https://apclassroom.collegeboard.org/" target="_blank" rel="noopener">AP Classroom ↗</a> 的题库、Progress Checks 和安全练习卷需相应学校 / 教师授权，不保证个人可直接免费访问完整选择题卷。<a href="https://bluebook.collegeboard.org/" target="_blank" rel="noopener">Bluebook ↗</a> 用于熟悉作答界面；并不等于本站可提供所有官方 MCQ。</p><ol><li>先独立限时作答，不边做边看评分。</li><li>按官方 scoring guidelines 标注得分证据，尤其是条件、单位、机制、对照与结论。</li><li>错题记录“误区 → 正确规则 → 新例子”，48 小时与 7 天后闭卷重做。</li></ol><p class="muted">数据安全：不采集账号、不上传作答。进度、练习草稿、计时状态和成绩只存在本机新版本存储；可从总览导出备份。清理浏览器数据可能丢失本地记录。</p></div></section></main><footer>AP 双科自习室 · 2027 备考 · 中文教学归纳与本站原创题 · Checked 2026-11-06</footer>
 <script>
-const SUBJ={stat:{n:"统计",c:"t-stat",col:"var(--stat)"},bio:{n:"生物",c:"t-bio",col:"var(--bio)"},csa:{n:"计算机 A",c:"t-csa",col:"var(--csa)"}};
-const DEFAULT_DATES={stat:"2027-05-07",bio:"2027-05-10",csa:"2027-05-12"};
-
-const SYL={
- stat:[["1 单变量数据与数据收集","20–30%","图表与统计量、分布比较、随机抽样、抽样偏差、实验设计"],
-       ["2 概率、随机变量与分布","15–25%","双分类变量、模拟、条件概率、独立、二项分布、正态分布、中心极限定理"],
-       ["3 分类数据推断：比例","15–25%","单/两比例置信区间与检验、第一/二类错误、卡方独立性与同质性检验"],
-       ["4 数值数据推断：均值","10–20%","单均值、配对、两均值的 t 区间与 t 检验"],
-       ["5 回归分析","10–20%","散点图、相关系数、最小二乘回归、残差（斜率推断是否考请对照 CED）"]],
- bio:[["1 生命的化学","8–11%","水、大分子结构与功能"],["2 细胞","10–13%","细胞结构、膜运输、细胞区室化"],
-      ["3 细胞能量","12–16%","酶、光合作用、细胞呼吸"],["4 细胞通讯与细胞周期","10–15%","信号转导、反馈、细胞周期调控"],
-      ["5 遗传","8–11%","减数分裂、孟德尔遗传、非孟德尔遗传"],["6 基因表达与调控","12–16%","DNA 复制、转录翻译、调控、突变、生物技术"],
-      ["7 自然选择","13–20%","进化证据、哈迪-温伯格、系统发生树、物种形成"],["8 生态","10–15%","能量流动、种群、群落、生物多样性"]],
- csa:[["1 使用对象和方法","15–25%","变量与类型、表达式、调用方法、String、Math"],
-      ["2 选择与循环","25–35%","if/else、布尔逻辑、while/for、嵌套循环、标准算法"],
-      ["3 类的创建","10–18%","类头、实例变量、构造器、方法、封装、this、static"],
-      ["4 数据集合","30–40%","数组、ArrayList、二维数组、查找排序、递归、二分查找、归并排序"]]
-};
-const EXAM={stat:"选择 42 题 / 90 分钟 / 50%；简答 4 题 / 90 分钟 / 50%（第 3 题固定为完整推断题）。全程机考。",
-            bio:"选择 60 题 / 90 分钟 / 50%；简答 6 题 / 90 分钟 / 50%（2 长题 9 分 + 4 短题 4 分）。FRQ 纸上手写。",
-            csa:"选择 42 题 / 90 分钟 / 55%；编程 4 题 / 90 分钟 / 45%：方法与控制结构、类设计、ArrayList、二维数组。"};
-
-// [起始周序号(0=11/9), 结束周序号, 科目, 任务]
-const W=[
- [0,1,"csa","装好 Java 环境（推荐 VS Code + JDK 21 或在线 IDE）；学 1.1–1.5：变量、类型、表达式"],
- [0,1,"stat","1.1–1.4：变量类型、单分类变量的表格和图"],
- [2,3,"csa","1.6–1.10：调用方法、String 类及常用方法、Math 类；读一遍 Java Quick Reference"],
- [2,3,"stat","1.5–1.9：单数值变量的图、形状/中心/离散/异常值、箱线图、分布比较"],
- [4,5,"csa","第 1 单元收尾：做 AP Classroom 第 1 单元 Progress Check"],
- [4,5,"stat","1.10–1.13：随机抽样、抽样偏差、实验设计；第 1 单元 Progress Check"],
- [6,7,"stat","第 1 单元查漏：做 2–3 道历年 FRQ 里的抽样/实验设计题"],
- [6,7,"csa","复习第 1 单元；写 5 个小程序练 String 方法"],
- [8,9,"stat","2.1–2.7：双分类变量、模拟、概率、条件概率、独立"],
- [8,9,"csa","2.1–2.5：布尔表达式、if/else、复合条件"],
- [8,9,"bio","第 1 单元 生命的化学 + 第 2 单元前半（细胞结构）"],
- [10,11,"stat","2.8–2.12：随机变量、二项分布、正态分布、中心极限定理；第 2 单元 Progress Check"],
- [10,11,"csa","2.6–2.10：while/for、嵌套循环、标准循环算法（求和、计数、最值）"],
- [10,11,"bio","第 2 单元后半（膜运输）+ 第 3 单元 细胞能量；做 1 道实验设计长题"],
- [12,13,"stat","3.1–3.8：抽样分布、单比例置信区间与检验、两类错误"],
- [12,13,"csa","第 2 单元 Progress Check；做 2 道历年 FRQ 第 1 题（方法与控制结构）"],
- [12,13,"bio","第 4 单元 细胞通讯与细胞周期；第 1–3 单元 Progress Check"],
- [14,15,"stat","3.9–3.15：两比例推断、卡方独立性/同质性；第 3 单元 Progress Check"],
- [14,15,"csa","第 3 单元 类的创建：构造器、实例变量、方法；做 2 道历年 FRQ 第 2 题（类设计）"],
- [14,15,"bio","第 4 单元 Progress Check；练 2 道短题（模型与数据分析）"],
- [16,17,"stat","第 4 单元：单均值、配对、两均值 t 推断"],
- [16,17,"csa","4.1–4.5：数组遍历与标准算法"],
- [16,17,"bio","第 5 单元 遗传 + 第 6 单元前半（复制、转录、翻译）"],
- [18,19,"stat","第 5 单元 回归分析；第 4–5 单元 Progress Check"],
- [18,19,"csa","4.6–4.11：ArrayList 遍历、增删时的下标陷阱；做 2 道历年 FRQ 第 3 题"],
- [18,19,"bio","第 6 单元后半（调控、生物技术）+ 第 7 单元 自然选择"],
- [20,20,"stat","推断题专项：每天 1 道 FRQ 第 3 题，按评分标准自评“条件—计算—结论”"],
- [20,20,"csa","4.12–4.16：二维数组、查找排序、递归、二分查找、归并排序；做 2 道 FRQ 第 4 题"],
- [20,20,"bio","第 8 单元 生态；第 5–8 单元 Progress Check"],
- [21,24,"stat","每周 1 套完整模考（选择 + FRQ 各 90 分钟），错题按单元归类复盘"],
- [21,24,"bio","每周 1 套完整模考；长题重点练作图和误差线；手写 FRQ 计时"],
- [21,24,"csa","每周 1 套完整模考；FRQ 手写后再上机验证；整理常见错误清单"],
- [22,22,"stat","用 Bluebook 做一次统计机考预览，练习键盘输入统计符号"],
- [24,25,"stat","考前一周：只做错题和公式表，不再开新题"],
- [24,25,"bio","考前一周：复习错题、实验设计模板（自变量/因变量/对照/重复）"],
- [24,25,"csa","考前一周：过一遍 Quick Reference 和常见算法模板"]
+'use strict';
+const todayExam=new Date();todayExam.setHours(0,0,0,0);const daysToExam=d=>Math.ceil((new Date(d+'T00:00:00')-todayExam)/86400000);document.getElementById('examCountdown').textContent='距生物 '+daysToExam('2027-05-03')+' 天，距统计 '+daysToExam('2027-05-11')+' 天。';
+const KEY='ap2027-stat-bio-16week-v2';
+let storageOK=true,state;try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{state={};storageOK=false}if(!state||typeof state!=='object'||Array.isArray(state))state={};
+state.done=state.done&&typeof state.done==='object'?state.done:{};state.scores=Array.isArray(state.scores)?state.scores:[];state.start=/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(state.start||'')?state.start:'2027-01-11';
+const $=id=>document.getElementById(id),esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{storageOK=false} $('storageStatus').textContent=storageOK?'✓ 当前版本自动保存在此浏览器；旧版数据未改动。':'⚠ 浏览器存储不可用或已满：当前改动可能仅在本次页面有效，请导出备份。'}
+const CED={stat:'https://apcentral.collegeboard.org/media/pdf/ap-statistics-course-and-exam-description-effective-fall-2026.pdf',bio:'https://apcentral.collegeboard.org/media/pdf/ap-biology-course-and-exam-description.pdf'};
+const units=[
+{s:'stat',n:1,name:'单变量数据探索与数据收集',en:'Exploring One-Variable Data and Collecting Data',weight:'20–30%',topics:[['问题与变量 · 1.1–1.4','统计问题要说明总体、变量，并预期个体之间存在变异。分类变量用频数 / 相对频数和条形图；定量变量不能仅因用数字编码就当作数值度量。'],['分布与比较 · 1.5–1.9','描述形状、中心、离散程度与异常特征，并带情境和单位。偏态 / 离群值时优先中位数与 IQR；对称且无明显离群时常用均值与标准差。比较两组必须用比较句，不是分别背四个词。'],['抽样与实验 · 1.10–1.13','随机抽样帮助向总体推广；随机分配帮助支持因果推断。分层抽样从每层随机抽，整群抽样抽群后调查群内个体。实验要有比较、随机化、控制和重复；不能靠增大样本量消除自愿回应偏差。']],trap:'随机抽样 ≠ 随机分配；相关并不自动支持因果。',qs:[['5 名学生通勤时间为 4、5、6、7、28 分钟。求均值与中位数，说明哪一个更能代表典型通勤。','均值 = (4+5+6+7+28)/5 = 10 分钟；中位数是第 3 个数，即 6 分钟。28 把均值向右拉高，故中位数更抗极端值，更适合描述这里的典型时间。不能因此删除真实的 28。'],['某校 2000 人，研究“本校学生每天睡眠多久”。从各年级按人数比例随机抽共 100 人；另一方案在熬夜讨论群发自愿问卷。比较两方案，并说明能否证明睡眠影响成绩。','分层随机方案覆盖各年级且层内随机，较适合估计该校总体；讨论群存在覆盖不足和自愿回应，可能过度代表睡眠较少者。两者都是观察性调查；未随机分配睡眠处理，成绩还受学习时间等混杂因素影响，不能直接证明因果。']]},
+{s:'stat',n:2,name:'概率、随机变量与概率分布',en:'Probability, Random Variables, and Probability Distributions',weight:'15–25%',topics:[['双分类与条件概率 · 2.1–2.7','用双向表区分联合、边际与条件比例；条件概率的分母是条件所限定的人群。P(A∪B)=P(A)+P(B)−P(A∩B)。互斥事件不同时发生；独立事件满足 P(A|B)=P(A)，两者不是同义词。模拟必须写清随机机制、单次试验与重复次数。'],['随机变量 · 2.8–2.10','概率分布的各概率非负且总和为 1；期望是长期加权平均，不一定是可能取值。二项模型须固定次数、独立、两结果、成功概率恒定；均值 np，标准差 √[np(1−p)]。'],['正态与抽样分布 · 2.11–2.12','用 z=(x−μ)/σ 定位单个观测值；抽样分布描述重复抽样下统计量的变异。中心极限定理谈样本均值的分布趋近正态，不是原始数据变正态。样本量增大通常使标准误减小。']],trap:'先判断模型与独立性，再按计算器；别把标准差和标准误混用。',qs:[['一家工厂每件产品合格概率 0.8，独立检查 3 件。求恰有 2 件合格的概率，并求合格件数的期望。','X ~ Binomial(3,0.8)。恰有 2 件的排列数为 C(3,2)=3，所以 P(X=2)=3×0.8²×0.2=0.384。E(X)=np=2.4 件；它是长期平均，不表示单次能出现 2.4 件。'],['100 名学生中 40 人骑车，其中 30 人戴头盔；其余 60 人中 12 人戴头盔。求 P(头盔|骑车)，判断两事件独立吗？','条件概率 = 30/40 = 0.75。总体戴头盔比例 = (30+12)/100 = 0.42。因 0.75 ≠ 0.42，骑车与戴头盔不独立；不能用 30/100 充当条件概率。']]},
+{s:'stat',n:3,name:'分类数据推断：比例',en:'Inference for Categorical Data: Proportions',weight:'15–25%',topics:[['估计与区间 · 3.1–3.4、3.9–3.11','参数 p 属于总体，p̂ 属于样本。单比例 z 区间 p̂ ± z*√[p̂(1−p̂)/n]；两比例区间估计 p1−p2，用非合并标准误。检查随机性；无放回时通常要求 n≤总体10%；区间正态近似检查样本成功 / 失败数。'],['显著性检验 · 3.5–3.8、3.12–3.13','先写参数与 H0 / Ha，再选程序、查条件、算统计量和 p 值、做有情境的结论。单比例检验按 H0 的 p0 算标准误和期望成功失败；两比例相等检验使用合并比例。p 值是假定 H0 真时获得同样或更极端数据的概率，不是 H0 为真的概率。'],['卡方与错误 · 3.14–3.15','独立性检验研究一个总体的两分类变量是否关联；同质性检验比较多个总体的分类分布。期望数=行总计×列总计/总数，df=(r−1)(c−1)，检查期望数至少5。I 类错误为误拒真 H0，II 类为未拒假 H0。']],trap:'置信度属于方法的长期覆盖率；未拒绝不等于证明 H0。',qs:[['从 2000 名学生随机抽 100 人，60 人支持延长图书馆开放。求近似 95% 总体支持率区间并解释。','p̂=0.60；随机抽样，100≤200，成功60、失败40均≥10。SE=√(0.6×0.4/100)≈0.0490；区间 0.60±1.96×0.0490≈(0.504,0.696)。我们有95%信心认为该校总体支持率在50.4%–69.6%之间；不能说95%的学生落在此区间。'],['某独立性检验为 2×3 表，某行总数50、某列总数40、全表100。求该格期望数和自由度；若 p=0.03、α=0.05，如何结论？','期望数=50×40/100=20；df=(2−1)(3−1)=2。若抽样和全表各格期望数条件均满足，0.03<0.05，拒绝独立的 H0，有证据认为该总体中两分类变量有关联。只知道一个格的期望数，不能代替检查全表；关联不是因果。']]},
+{s:'stat',n:4,name:'定量数据推断：均值',en:'Inference for Quantitative Data: Means',weight:'10–20%',topics:[['抽样均值与单样本 t · 4.1–4.5','总体标准差未知，用 s 估计，所以用 t 分布，df=n−1。单均值区间 x̄±t*s/√n；检验 t=(x̄−μ0)/(s/√n)。检查随机性、10%条件以及总体近似正态或样本足够大；小样本要特别留意强偏态与离群值。'],['配对与独立两样本 · 4.2–4.10','同一对象前后或匹配对象产生相关观测，先定义差值，做单样本 t。两独立组则估计 μ1−μ2，SE=√(s1²/n1+s2²/n2)，按程序使用合适自由度，不把所有数据当独立或默认合并方差。'],['解释与设计','区间是否含 0 可帮助判断均值差是否与 0 相容；检验结论仍需结合设计。统计显著不代表实际效应很大，报告差异量级、单位和不确定性。']],trap:'均值用 t；配对研究的 n 是配对数量，不是两个测量数之和。',qs:[['随机抽 16 个独立、来自近似正态总体的包装，均重 102g、s=8g；总体包装很多。给 t*=2.131，求95%均重区间。','SE=8/√16=2g；误差界=2.131×2=4.262g。区间=(97.738,106.262)g，约(97.74,106.26)g。随机性、近似正态及抽样不超过总体10%满足时可作总体均值推断；不是95%包装重量的范围。'],['20 人训练前后各测一次，定义差=训练后−训练前，差均值3、差s=4。检验平均差大于0，应选什么方法？统计量多少？','同一人的两次测量配对，做差值的单样本 t 检验：H0:μd=0，Ha:μd>0；t=3/(4/√20)≈3.354，df=19。还需确认随机抽样 / 分配、配对间独立及差值分布无严重偏态或离群，才解释 p 值；不能做独立两样本检验。']]},
+{s:'stat',n:5,name:'回归分析',en:'Regression Analysis',weight:'10–20%',topics:[['散点图与相关 · 5.1–5.2','定量变量成对记录，描述方向、形式、强度与异常点。r 无单位、取值−1到1、衡量线性关联；更换计量单位不改变 r。相关不能独自证明因果。'],['模型与残差 · 5.3–5.5','最小二乘直线 ŷ=a+bx 使残差平方和最小；残差 e=y−ŷ。斜率表示 x 每增1单位，预测 y 平均变化 b单位；截距要判断 x=0 是否有实际意义。r²描述样本中 y 的变异被线性模型解释的比例。避免超出观测范围外推。']],trap:'本章是描述性回归，不做回归斜率显著性检验或置信区间。',qs:[['样本学习时长范围1–5h，预测分数 ŷ=50+6x。某生学3h得72分，求预测值、残差并解释斜率。','预测值=50+6×3=68分；残差=实际−预测=72−68=+4分，实际比模型预测高4分。斜率6表示在该模型中学习时间每增加1h，预测分数平均增加6分；不能由观察相关声称额外1h必然因果提升6分。'],['某线性模型 r=−0.8。求 r²并解释；能否直接预测观测范围外30h的成绩？','r²=0.64；在这组数据中，响应变量变异的64%可由它与解释变量的拟合线性关系解释。负 r 只表示方向，r²不带负号。若30h远超观测范围，外推不可靠，不能认为线性趋势一定延续。']]},
+{s:'bio',n:1,name:'生命的化学基础',en:'Chemistry of Life',weight:'8–11%',topics:[['水与元素','水分子的极性与氢键带来内聚、高比热等性质；把分子结构与生物功能联系，而非只背“水重要”。碳骨架和官能团影响分子形状、极性与反应。'],['大分子结构与功能','碳水化合物储能 / 支撑；脂质参与膜和长期储能；蛋白质由氨基酸顺序与相互作用形成空间结构；核酸储存信息。脱水缩合形成连接、水解拆解连接；蛋白质功能依赖合适构象。']],trap:'氢键不是水分子内的 O–H 共价键；变性通常不等于肽键全部断裂。',qs:[['高温后某酶活性显著下降，但氨基酸序列未改变。解释可能机制。','高温可破坏维持二级 / 三级结构的相互作用，使活性位点构象改变，底物结合或催化效率下降。序列未变说明不必发生肽键水解；结构变化导致功能变化是解释关键。'],['一个包含10个氨基酸的线性肽完全水解，需水解多少个肽键、净消耗多少个水分子？','线性 n 个残基之间有 n−1 个肽键，所以9个。每断开一个肽键通过水解加入1个水分子，净消耗9个水分子。不要把残基数10直接当成肽键数。']]},
+{s:'bio',n:2,name:'细胞',en:'Cells',weight:'10–13%',topics:[['细胞结构与尺度','细胞器的膜把不同化学过程分隔并协同；分泌蛋白通常走核糖体→粗面内质网→高尔基体→囊泡。表面积 / 体积比随尺寸增大而降低，影响物质交换。'],['膜与物质运输','磷脂双层有疏水核心；小非极性分子容易穿过，大极性 / 带电粒子通常需蛋白。被动运输顺梯度不直接消耗 ATP；主动运输逆电化学梯度需能量。'],['渗透与水势','水沿水势降低方向移动；溶质势 Ψs=−iCRT，压力势也可改变总水势。植物细胞壁与膨压影响净水流；动态平衡不等于分子停止运动。']],trap:'不要只用溶质浓度判断所有情形，存在压力差时须看总水势。',qs:[['立方细胞边长从1变成2（相同单位）。比较表面积/体积比，说明交换影响。','边长1：SA=6、V=1，比=6；边长2：SA=24、V=8，比=3。尺寸翻倍而比例减半，单位体积可用的交换面积下降，可能限制营养输入和废物排出。'],['假定膜只透水，不透蔗糖。细胞内0.2M、外液0.5M蔗糖，初始压力相同。初始净水流方向？','外液溶质更多，溶质势更负；压力相同时外液总水势较低，水由细胞内流向外液。细胞体积下降；若为植物细胞可能发生质壁分离。随着压力 / 浓度改变，净流量会改变。']]},
+{s:'bio',n:3,name:'细胞能量学',en:'Cellular Energetics',weight:'12–16%',topics:[['酶与能量耦联','酶降低活化能，不改变反应 ΔG 或平衡位置。温度、pH、底物浓度和抑制剂会改变速率。ATP 水解可与需能过程耦联，但不是“能量凭空产生”。'],['呼吸与化学渗透','糖酵解在细胞质基质中发生；后续氧化过程把电子交给载体，电子传递链建立 H+梯度，ATP合酶利用梯度。氧在有氧呼吸中是末端电子受体；发酵再生 NAD+维持糖酵解。'],['光合作用与实验','光反应在类囊体膜将光能转为 ATP / NADPH 并释放来自水的 O2；卡尔文循环在基质固定碳。用光照、CO2、温度等变量设计实验，并区分净产氧与总光合速率。']],trap:'植物也进行细胞呼吸；光合作用放出的氧主要来自水而不是CO2。',qs:[['某物质让线粒体内膜对H+自由通透。预测ATP合成与H+梯度如何变化，说明原因。','H+可不经过ATP合酶返回，梯度被耗散。ATP合酶可利用的电化学势下降，氧化磷酸化ATP产量下降；电子传递 / 耗氧不必同时停止，不能简单说所有代谢立即停止。'],['水草光下净产氧4单位/h，黑暗耗氧1单位/h。若呼吸速率不变，估算总光合产氧。','净光合=总光合−呼吸。总光合产氧=4+1=5单位/h。必须声明呼吸光暗速率相同的估算假设；若速率改变，不能直接相加。']]},
+{s:'bio',n:4,name:'细胞通讯与细胞周期',en:'Cell Communication and Cell Cycle',weight:'10–15%',topics:[['信号接收、传递、响应','信号分子与特异受体结合，触发细胞内级联，可放大信号并改变酶活性或基因表达。不同细胞可因受体 / 下游蛋白不同而对同信号有不同响应；反馈调节维持稳态。'],['细胞周期与调控','G1生长、S复制DNA、G2准备、M有丝分裂与胞质分裂。检查点、细胞周期蛋白与CDK调控进程；失去调控可能引发异常增殖。染色体计数依据着丝粒，不按DNA条数随意翻倍。']],trap:'信号放大不是信号分子自己不断复制；S期DNA加倍但染色体数通常不变。',qs:[['细胞表面受体正常结合激素，但下游激酶失活。预测最终基因表达响应并说明。','接收可正常发生，但关键激酶不能把信号传递给下游，故依赖该通路的表达响应减少或消失。需说明这是该激酶必需且无替代通路的情境；正常结合不保证正常响应。'],['某二倍体细胞G1期有6条染色体。S期完成后、姐妹染色单体未分离时，染色体和染色单体各多少？','染色体仍为6条，每条含2条姐妹染色单体，共12条染色单体，DNA含量是G1的2倍。计数按着丝粒；不能把复制后的12条染色单体直接叫12条染色体。']]},
+{s:'bio',n:5,name:'遗传',en:'Heredity',weight:'8–11%',topics:[['减数分裂与变异','减数第一次分裂分离同源染色体，第二次分离姐妹染色单体。互换与同源染色体的独立分配产生组合；随机受精进一步增加变异。'],['遗传模型与数据','从分离定律出发，用概率计算单 / 双因子、伴性等遗传，不默认所有基因独立或完全显性。连锁可表现为重组型少于亲本型；用卡方拟合优度比较观察与预期遗传比。'],['环境与表型','表型受基因型与环境共同影响。样本偏离理想比例可因随机误差，不应只看到不完全相等就宣称理论错误。']],trap:'生物遗传的卡方拟合优度仍是本学科内容；与新版统计删项不同。',qs:[['假设完全显性，Aa×Aa。子代隐性表型概率多少？独立生育两个子代均为隐性的概率多少？','配子A / a各1/2；子代AA、Aa、aa概率1/4、1/2、1/4，因此隐性表型概率1/4。两个子代独立时均隐性=(1/4)²=1/16；不把Aa也算隐性。'],['预期显性:隐性=3:1，共80株，观察64显性16隐性。求卡方值与自由度；给α=.05临界值3.84，作结论。','期望60、20。χ²=(64−60)²/60+(16−20)²/20≈0.267+0.8=1.067；df=类别数−1=1（未额外估计参数）。独立观察且期望数均≥5时，1.067<3.84，不拒绝3:1模型；不是证明模型必然正确。']]},
+{s:'bio',n:6,name:'基因表达与调控',en:'Gene Expression and Regulation',weight:'12–16%',topics:[['信息流与复制','DNA半保留复制；转录产生RNA，翻译按mRNA密码子合成多肽。DNA / RNA聚合的合成方向为5′→3′；模板互补且反向平行。真核前体mRNA有加工过程。'],['调控、突变与技术','原核操纵子、真核转录因子 / 染色质状态等控制表达时空；突变效果取决于位置与类型，可无效、改变功能或移码。PCR扩增特定DNA，电泳按片段大小等特性分离，须有对照解释条带。']],trap:'编码链与模板链不同；突变不必改变蛋白，也不会总是有害。',qs:[['DNA模板片段写作3′-TAC GGA-5′。写mRNA及对应氨基酸，给AUG=Met、CCU=Pro。','RNA与模板互补并反向平行，mRNA=5′-AUG CCU-3′。从AUG读起翻译为Met–Pro。mRNA使用U而非T；不能把模板直接替T为U。'],['编码区起始附近插入1个核苷酸，与插入3个相比通常有何不同？假设不影响剪接。','插入1个改变其后读码框，常使下游氨基酸序列改变并可能出现提前终止；插入3个通常维持下游读码框，可能增加氨基酸并改变局部序列。两者都可能影响功能；维持读码框不等于必然无害。']]},
+{s:'bio',n:7,name:'自然选择',en:'Natural Selection',weight:'13–20%',topics:[['选择与群体进化','个体具有可遗传差异；环境使部分变异携带者繁殖成功不同，从而改变群体等位基因频率。突变不因生物“需要”而定向出现；遗传漂变（尤其小群体）、基因流也会改变频率。'],['平衡、证据与物种','Hardy–Weinberg在无选择、无迁移、无突变、大群体、随机交配等条件下给p²+2pq+q²=1。用同源性、化石、分子序列与系统树推断共同祖先；生殖隔离可促成物种形成。']],trap:'个体被选择，群体进化；系统树节点代表共同祖先，不代表谁更“高级”。',qs:[['二等位基因群体满足Hardy–Weinberg，隐性表型频率0.09。求q、p和杂合子频率。','q²=0.09，q=0.3；p=1−q=0.7；2pq=2×0.7×0.3=0.42。杂合子42%。若平衡条件不满足，不能从表型频率直接套这套基因型预期。'],['施用抗生素后抗性细菌比例提高。解释为何不应说“细菌为了生存产生了需要的突变”。','群体先存在由随机变异产生的可遗传抗性；药物使敏感菌存活 / 繁殖较少，抗性菌贡献更多后代，抗性频率上升。环境选择已有差异，不是按需要定向制造突变；个体未因意愿进化。']]},
+{s:'bio',n:8,name:'生态学',en:'Ecology',weight:'10–15%',topics:[['种群与群落','指数增长适合资源暂不受限的情境；逻辑斯谛模型dN/dt=rN(1−N/K)，承载量受环境影响。密度制约因素如竞争 / 疾病与非密度制约扰动不同。互利、捕食、竞争影响群落结构。'],['能量、物质与生态变化','能量沿食物网流动并散失，物质通过循环再利用；不能说能量像碳一样循环。生物多样性、关键物种、干扰与人为变化影响稳定性；用数据和比较组评估生态干预。']],trap:'生态能量传递效率不是所有系统固定10%；题目给什么效率就用什么。',qs:[['生产者固定10000kJ能量，向初级消费者传递效率为12%，再向次级消费者为10%。次级消费者获得多少？','初级=10000×0.12=1200kJ；次级=1200×0.10=120kJ。逐级相乘，不直接用10000的10%；未传递能量可用于呼吸散热、未被摄食 / 同化等。'],['逻辑斯谛模型中r=0.2/年、K=1000、N=500。求当时dN/dt；若N=K呢？','dN/dt=0.2×500×(1−500/1000)=50个体/年。N=K时模型给0，表示净增长为0，不是所有个体停止出生死亡；真实K也可随环境改变。']]}
 ];
-
-const PRACTICE=[
- {s:"stat",u:"第 1 单元",q:"一位研究者想了解全校学生每天的睡眠时间，在图书馆门口随机拦下 50 名学生询问。这个抽样方法可能带来什么偏差？怎样改进？",
-  a:"在图书馆门口拦人属于方便抽样，样本更可能是爱学习、可能睡得更少的学生，会造成选择偏差（低估或高估全校平均睡眠）。改进：用全校学生名单做简单随机抽样，或按年级分层后在每层随机抽取。"},
- {s:"stat",u:"第 2 单元",q:"某检测的命中率为 0.9，独立检测 10 个阳性样本。X 表示检测出阳性的个数，求 P(X = 10) 和 E(X)。",
-  a:"X ~ Binomial(n=10, p=0.9)。P(X=10)=0.9¹⁰≈0.349；E(X)=np=9。"},
- {s:"stat",u:"第 3 单元",q:"随机抽取 200 名学生，其中 46 人每天吃早餐。构造总体比例的 95% 置信区间，并解释。",
-  a:"p̂=0.23。条件：随机样本；10% 条件（全校学生多于 2000）；np̂=46≥10，n(1−p̂)=154≥10。SE=√(0.23×0.77/200)≈0.0298；区间 0.23±1.96×0.0298 ≈ (0.172, 0.288)。解释：我们有 95% 的信心，全校每天吃早餐的学生比例在 17.2% 到 28.8% 之间。"},
- {s:"stat",u:"第 5 单元",q:"回归方程为 ŷ = 2.1 + 0.8x（x 为每周运动小时数，ŷ 为体能评分）。解释斜率，并说明一个残差为 −1.5 的点的含义。",
-  a:"斜率：每周运动时间每增加 1 小时，体能评分的预测值平均增加 0.8 分。残差 −1.5：这个人的实际评分比模型预测值低 1.5 分。"},
- {s:"bio",u:"第 3 单元",q:"在测定光合速率的实验中，把光强从高调到低，O₂ 释放速率会怎样变化？写出自变量、因变量和一个需要控制的变量。",
-  a:"O₂ 释放速率下降（光反应产生的 O₂ 减少）。自变量：光强；因变量：O₂ 释放速率；控制变量举例：温度、CO₂ 浓度、植物种类与叶面积。"},
- {s:"bio",u:"第 6 单元",q:"一个点突变把密码子 UAC 变成了 UAG。对蛋白质会有什么影响？",
-  a:"UAG 是终止密码子，属于无义突变，翻译提前终止，得到截短的蛋白质，通常会失去功能。"},
- {s:"bio",u:"第 7 单元",q:"某种群中隐性性状个体占 16%，假设处于哈迪-温伯格平衡，求杂合子比例。",
-  a:"q²=0.16 → q=0.4，p=0.6。杂合子 2pq=2×0.6×0.4=0.48，即 48%。"},
- {s:"csa",u:"第 1 单元",q:"下面代码输出什么？\nString s = \"nutrition\";\nSystem.out.println(s.substring(2, 5) + s.indexOf(\"t\"));",
-  a:"substring(2,5) 取下标 2、3、4 → \"tri\"；indexOf(\"t\") 是第一个 t 的下标 2。输出：tri2"},
- {s:"csa",u:"第 2 单元",q:"写一个方法 sumOdd(int n)，返回 1 到 n 之间所有奇数的和。",
-  a:"public static int sumOdd(int n) {\n    int sum = 0;\n    for (int i = 1; i <= n; i += 2) {\n        sum += i;\n    }\n    return sum;\n}"},
- {s:"csa",u:"第 4 单元",q:"写一个方法 countAbove(int[][] grid, int target)，返回二维数组中大于 target 的元素个数。",
-  a:"public static int countAbove(int[][] grid, int target) {\n    int count = 0;\n    for (int[] row : grid) {\n        for (int v : row) {\n            if (v > target) count++;\n        }\n    }\n    return count;\n}"},
- {s:"csa",u:"第 4 单元",q:"下面代码想删掉 ArrayList 里所有的 0，为什么会出错？怎么改？\nfor (int i = 0; i < list.size(); i++) {\n    if (list.get(i) == 0) list.remove(i);\n}",
-  a:"删除后后面的元素前移，i++ 会跳过紧挨着的下一个元素，连续两个 0 时会漏删。改法：删除后 i--，或者从后往前遍历：\nfor (int i = list.size() - 1; i >= 0; i--) {\n    if (list.get(i) == 0) list.remove(i);\n}"}
+const weeks=[
+[6,6,'统计 U1：问题、变量、图表与描述','生物 U1：水、大分子、结构与功能','统计15 MCQ+1段分布解释；生物15 MCQ+1短答','闭卷画两科概念图；建立错题本；各复做2题'],
+[6,6,'统计 U1：抽样偏差与实验设计','生物 U2：细胞器、膜与运输','统计20 MCQ+1实验设计；生物20 MCQ+1短答','检查因果/推广边界；画膜运输图并自讲3分钟'],
+[6,6,'统计 U2：双向表、条件概率、独立性','生物 U2：水势、尺度与细胞分隔','统计20 MCQ+2概率解释；生物20 MCQ+1数据短答','完成 U1–2 原创题；错题48小时后重做'],
+[6,6,'统计 U2：二项、正态与抽样分布','生物 U3：酶、呼吸与光合入门','双科各20 MCQ+各1 FRQ分题；从CED样题校准','月检：双科各30分钟诊断+各1小时批改，均计入6h'],
+[7,7,'统计 U3：估计量、单比例区间与解释','生物 U3：电子传递、化学渗透、实验变量','统计25 MCQ+1推断分题；生物25 MCQ+1长题分题','用一句话区分参数/统计量；重画能量流程'],
+[7,7,'统计 U3：单比例检验、p值与错误','生物 U4：信号转导、反馈与细胞周期','双科各25 MCQ+各1 FRQ分题','检查结论是否有情境；画细胞周期与检查点'],
+[7,7,'统计 U3：双比例区间与检验','生物 U5：减数分裂、孟德尔与连锁','双科各25 MCQ+各1 FRQ；按主题查2023入口','比较合并/非合并SE；检验遗传模型的假设'],
+[7,7,'统计 U3：卡方独立性/同质性，综合推断','生物 U5：遗传模型、卡方与环境表型','双科各25 MCQ+各1 FRQ；按主题查2024入口','月检各45分钟+各75分钟复盘；记录最弱两主题'],
+[7,8,'统计 U4：均值抽样分布、单样本t区间/检验','生物 U6：DNA复制、转录、翻译','统计25 MCQ+1推断FRQ；生物30 MCQ+1长题分题','对比z与t；逐步写模板→mRNA→蛋白'],
+[7,8,'统计 U4：配对差值与独立两均值','生物 U6：调控、突变与生物技术','统计25 MCQ+1 FRQ；生物30 MCQ+1 FRQ','从2023/2024各挑未做过适配分题；练对照和机制'],
+[7,8,'统计 U5：散点、相关、回归、残差与r²','生物 U7：自然选择、漂变、基因流、平衡','统计25 MCQ+1回归分题；生物30 MCQ+1 FRQ','完成全部统计原创题；从2025入口按主题选题'],
+[7,8,'统计 U1–5综合：识别方法、条件与结论','生物 U7–8：物种、系统树、种群与能量流','统计30 MCQ+1综合FRQ；生物30 MCQ+1 FRQ','从2026入口选适配分题；各做60分钟混合诊断+60分钟复盘'],
+[8,8,'统计完整自组卷A：3h考试+3h复盘+2h补弱','生物 U8收尾与U1–4跨单元串联','统计42 MCQ+4 FRQ（按新版自组）；生物30 MCQ+2短FRQ','统计按条件/计算/解释分错因；48小时后重做'],
+[8,8,'统计针对弱点：概率/推断/回归穿插','生物完整自组卷A：3h考试+3h复盘+2h补弱','统计30 MCQ+2 FRQ；生物60 MCQ+6 FRQ','生物核查图轴、误差线、对照与因果链'],
+[7,7,'统计完整自组卷B：3h考试+3h复盘+1h公式提取','生物实验与数据专项，复习U5–8','统计42 MCQ+4 FRQ；生物30 MCQ+2短FRQ','B卷不要重复A卷题；双科各列5个高频误区'],
+[7,7,'统计维持：30min短卷+90min批改，其余5h错题/条件/输入训练','生物完整自组卷B：3h考试+3h复盘+1h回顾','统计20 MCQ+1 FRQ；生物60 MCQ+6 FRQ','做最后知识提取，检查Bluebook操作；不熬夜刷陌生难题']
 ];
-
-// ---------- state ----------
-const KEY="ap2027-progress-v1";
-let st=JSON.parse(localStorage.getItem(KEY)||"{}");
-st.done=st.done||{}; st.dates=st.dates||{...DEFAULT_DATES};
-const save=()=>localStorage.setItem(KEY,JSON.stringify(st));
-
-const START=new Date(2026,10,9); // Monday 11/9/2026
-const NWEEKS=26;
-const wkStart=i=>{const d=new Date(START);d.setDate(d.getDate()+7*i);return d};
-const fmt=d=>`${d.getMonth()+1}/${d.getDate()}`;
-function currentWeek(){const diff=Math.floor((new Date()-START)/(7*864e5));return Math.max(0,Math.min(NWEEKS-1,diff))}
-function tasksFor(i){const out=[];W.forEach((t,k)=>{if(i>=t[0]&&i<=t[1])out.push({id:`${k}-${i}`,s:t[2],txt:t[3]})});return out}
-function allTasks(){let a=[];for(let i=0;i<NWEEKS;i++)a=a.concat(tasksFor(i));return a}
-
-function taskHTML(t){const d=!!st.done[t.id];
-  return `<label class="task ${d?'done':''}"><input type="checkbox" data-id="${t.id}" ${d?'checked':''}><span><span class="tag ${SUBJ[t.s].c}">${SUBJ[t.s].n}</span><span class="txt">${t.txt}</span></span></label>`}
-
-function renderWeeks(){
-  const cw=currentWeek(), hide=document.getElementById("hideDone").checked;
-  let h="";
-  for(let i=0;i<NWEEKS;i++){
-    const ts=tasksFor(i); if(!ts.length)continue;
-    const doneN=ts.filter(t=>st.done[t.id]).length;
-    if(hide&&doneN===ts.length)continue;
-    const e=wkStart(i),f=new Date(e);f.setDate(f.getDate()+6);
-    const ph=i<8?"阶段 1":i<16?"阶段 2":i<20?"阶段 3":"阶段 4";
-    h+=`<div class="card week ${i===cw?'current':''}" id="w${i}"><h3>第 ${i+1} 周　${fmt(e)} – ${fmt(f)} <span class="muted">${ph} · 完成 ${doneN}/${ts.length}${i===cw?' · 本周':''}</span></h3>${ts.map(taskHTML).join("")}</div>`;
-  }
-  document.getElementById("weeks").innerHTML=h||'<div class="card">全部完成了！</div>';
-}
-function renderHome(){
-  const all=allTasks();
-  let ov="";
-  for(const s in SUBJ){const a=all.filter(t=>t.s===s),d=a.filter(t=>st.done[t.id]).length,p=a.length?Math.round(d/a.length*100):0;
-    ov+=`<div style="margin:8px 0"><b>${SUBJ[s].n}</b> <span class="muted">${d}/${a.length}（${p}%）</span><div class="bar"><div style="width:${p}%;background:${SUBJ[s].col}"></div></div></div>`}
-  document.getElementById("overall").innerHTML=ov;
-  let cd="";
-  for(const s in SUBJ){const days=Math.ceil((new Date(st.dates[s]+"T09:00")-new Date())/864e5);
-    cd+=`<div class="card"><div class="muted">${SUBJ[s].n} 距考试</div><div class="stat" style="color:${SUBJ[s].col}">${days>=0?days:0} 天</div><div class="muted">${st.dates[s]}</div></div>`}
-  document.getElementById("countdowns").innerHTML=cd;
-  const cw=currentWeek(),e=wkStart(cw),f=new Date(e);f.setDate(f.getDate()+6);
-  document.getElementById("thisweek").innerHTML=`<h3 style="margin-top:0">本周任务（第 ${cw+1} 周 ${fmt(e)} – ${fmt(f)}）</h3>`+(tasksFor(cw).map(taskHTML).join("")||'<p class="muted">本周没有安排。</p>');
-  for(const s in SUBJ)document.getElementById("d-"+s).value=st.dates[s];
-}
-function renderSyl(){
-  let h="";for(const s in SYL){h+=`<div class="card"><h3 style="margin-top:0"><span class="tag ${SUBJ[s].c}">${SUBJ[s].n}</span></h3><p class="muted">${EXAM[s]}</p><table><tr><th>单元</th><th>比例</th><th>内容</th></tr>${SYL[s].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div>`}
-  document.getElementById("syl").innerHTML=h;
-}
-function esc(x){return x.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
-function renderQs(f){
-  document.getElementById("qs").innerHTML=PRACTICE.filter(p=>f==="all"||p.s===f).map(p=>{
-    const code=p.s==="csa";
-    return `<div class="card q" style="border-left-color:${SUBJ[p.s].col}"><span class="tag ${SUBJ[p.s].c}">${SUBJ[p.s].n}</span><span class="muted">${p.u}</span>
-    ${code?`<pre>${esc(p.q)}</pre>`:`<p>${esc(p.q)}</p>`}<details><summary>看答案</summary>${code&&p.a.includes("{")||p.a.includes("\n")?`<pre>${esc(p.a)}</pre>`:`<p>${esc(p.a)}</p>`}</details></div>`}).join("");
-}
-function renderAll(){renderHome();renderWeeks()}
-
-document.addEventListener("change",e=>{
-  if(e.target.dataset.id){st.done[e.target.dataset.id]=e.target.checked;save();renderAll()}
-  if(e.target.id&&e.target.id.startsWith("d-")){st.dates[e.target.id.slice(2)]=e.target.value;save();renderHome()}
-  if(e.target.id==="hideDone")renderWeeks();
-});
-document.getElementById("nav").addEventListener("click",e=>{
-  const s=e.target.dataset.s;if(!s)return;
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));
-  document.querySelectorAll("section").forEach(x=>x.classList.toggle("on",x.id===s));
-  window.scrollTo(0,0);
-});
-document.getElementById("jump").onclick=()=>{const el=document.getElementById("w"+currentWeek());el&&el.scrollIntoView({behavior:"smooth"})};
-document.getElementById("reset").onclick=()=>{if(confirm("确定清空所有勾选进度？")){st.done={};save();renderAll()}};
-document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>renderQs(b.dataset.f));
-
-renderAll();renderSyl();renderQs("all");
-</script>
-</body>
-</html>
+function dateAt(days){let d=new Date(state.start+'T12:00:00');d.setDate(d.getDate()+days);return d}function fmt(d){return d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'})}function currentWeek(){const today=new Date();today.setHours(12,0,0,0);return Math.floor((today-dateAt(0))/86400000/7)}
+function taskTexts(w){return [w[2]+'（'+w[0]+'h，含本周该科做题与批改）',w[3]+'（'+w[1]+'h，含本周该科做题与批改）','复盘交付：'+w[5]+'（已含在双科小时配额）']}
+function renderPlan(){const done=Object.values(state.done).filter(Boolean).length,p=Math.round(done/48*100);$('progressNumber').textContent=p+'%';$('progressBar').style.width=p+'%';$('progressCount').textContent=done+' / 48 项任务';document.querySelector('[role=progressbar]').setAttribute('aria-valuenow',p);$('startDate').value=state.start;$('planRange').textContent=dateAt(0).getFullYear()+'/'+fmt(dateAt(0))+' → '+dateAt(111).getFullYear()+'/'+fmt(dateAt(111));let cw=currentWeek();$('weeks').innerHTML=weeks.map((w,i)=>{if($('hideDone').checked&&[0,1,2].every(k=>state.done[i+'-'+k]))return '';return '<article class="card week '+(i===cw?'current':'')+'" id="week-'+i+'"><div class="row between"><h3>W'+String(i+1).padStart(2,'0')+' · '+fmt(dateAt(i*7))+'–'+fmt(dateAt(i*7+6))+'</h3><span class="badge">统计 '+w[0]+'h + 生物 '+w[1]+'h = '+(w[0]+w[1])+'h</span></div><p class="weeknote"><b>练习配额：</b>'+w[4]+'</p>'+taskTexts(w).map((t,k)=>'<label class="task '+(state.done[i+'-'+k]?'done':'')+'"><input type="checkbox" data-task="'+i+'-'+k+'" '+(state.done[i+'-'+k]?'checked':'')+'><span>'+t+'</span></label>').join('')+'</article>'}).join('')||'<p class="empty">所有周已完成，真棒！取消“隐藏完成周”可查看。</p>';let titles=['基础与语言','推断与遗传','补全与迁移','完整计时与稳定输出'];$('months').innerHTML='<div class="grid">'+[0,1,2,3].map(m=>{let ws=weeks.slice(m*4,m*4+4),s=ws.reduce((a,w)=>a+w[0],0),b=ws.reduce((a,w)=>a+w[1],0);return '<div class="card"><span class="muted">MONTH 0'+(m+1)+' · W'+(m*4+1)+'–'+(m*4+4)+'</span><h3>'+titles[m]+'</h3><div class="big">'+(s+b)+' h</div><p>统计 '+s+'h · 生物 '+b+'h<br>每周 '+ws.map(w=>w[0]+w[1]).join(' / ')+'h</p><small>'+['统计U1–2，生物U1–3；交付分布比较、抽样设计、膜运输与能量图。','统计U3，生物U3–5；交付完整推断步骤与遗传模型。','统计U4–5综合，生物U6–8主体；交付方法选择表、信息流与进化图。','每科两次完整自组模考；按错误类型补弱，并保留休息。'][m]+'</small></div>'}).join('')+'</div>'}
+function renderUnits(){const f=$('subjectFilter').value;let visible=units.filter(u=>f==='all'||u.s===f);$('unitLinks').innerHTML=visible.map(u=>'<a href="#unit-'+u.s+u.n+'">'+(u.s==='stat'?'统计':'生物')+' U'+u.n+'</a>').join('');$('units').innerHTML=visible.map(u=>'<article class="card unit" id="unit-'+u.s+u.n+'"><div class="titleline"><div><span class="badge '+(u.s==='bio'?'bio':'')+'">'+(u.s==='stat'?'STATISTICS':'BIOLOGY')+' · UNIT '+u.n+'</span><h3>'+u.name+'</h3><small>'+u.en+'</small></div><span class="muted">MCQ权重 '+u.weight+'</span></div><div class="chapterbody">'+u.topics.map(t=>'<h4>'+t[0]+'</h4><p>'+t[1]+'</p>').join('')+'<div class="note"><b>易错提醒：</b>'+u.trap+'</div><p><a href="'+CED[u.s]+'" target="_blank" rel="noopener">本章依据：官方 CED 单元 '+u.n+' ↗</a></p><h4>本站原创基础题 · 先做后展开</h4>'+u.qs.map((q,k)=>'<div class="question"><h4>0'+(k+1)+' / '+(k?'迁移应用':'概念起步')+'</h4><p>'+q[0]+'</p><details><summary>展开答案与推理</summary><p class="solution">'+q[1]+'</p></details></div>').join('')+'</div></article>').join('')}
+function renderScores(){$('scores').innerHTML=state.scores.length?'<div class="tablewrap"><table><tr><th>日期 / 科目</th><th>练习</th><th>成绩</th><th>改进</th></tr>'+state.scores.slice().reverse().map(r=>'<tr><td>'+esc(r.date)+' / '+(r.subject==='stat'?'统计':'生物')+'</td><td>'+esc(r.name)+'</td><td>'+r.got+'/'+r.max+' ('+Math.round(r.got/r.max*100)+'%)</td><td>'+esc(r.note)+'</td></tr>').join('')+'</table></div>':'<p class="empty">尚无记录。完成短卷后，按解析自评并保存。</p>'}
+const mini={stat:[{q:'随机抽取全校学生但不随机分配学习方法，能否仅凭相关证明该方法提高成绩？',choices:['能，只要相关强','不能，可能有混杂因素','能，只要样本量大','不能做任何总体描述'],a:1,why:'随机抽样帮助推广，不消除观察研究的混杂。选B。'}, {q:'X~Binomial(4,0.5)，P(X=4)为多少？',choices:['0.5','0.25','0.0625','0.125'],a:2,why:'4次独立均成功，0.5⁴=0.0625。选C。'}, {q:'已满足条件：n=100，p̂=.5，给z*=1.96，95%单比例区间约为？',choices:['(.402,.598)','(.49,.51)','(.304,.696)','(.45,.55)'],a:0,why:'SE=√(.25/100)=.05；误差界=.098。选A。'}, {q:'原创简答（4分）：一个配对实验20人，差值=后−前；差均值2、差s=4。写出检验平均差>0的假设、方法、统计量，并指出一个应检查的分布条件。',answer:'H0:μd=0，Ha:μd>0（1）；差值单样本t，df=19（1）；t=2/(4/√20)≈2.236（1）；20个差值无明显偏态和离群值 / 差值总体近似正态（1）。另应有随机设计及配对间独立，才能作有效推断。'}],bio:[{q:'酶主要通过什么加快反应？',choices:['使ΔG永远变负','降低活化能','改变反应平衡常数','消除对底物的需要'],a:1,why:'酶降低活化能，不改变反应ΔG或平衡。选B。'}, {q:'某细胞2n=8，S期完成、姐妹未分离时染色体数为？',choices:['4','8','16','32'],a:1,why:'按着丝粒数染色体，复制后仍8条，染色单体16条。选B。'}, {q:'平衡群体q=.2，杂合子比例为？',choices:['.04','.16','.32','.64'],a:2,why:'p=.8；2pq=2×.8×.2=.32。选C。'}, {q:'原创简答（4分）：比较光强对净光合速率的影响，设计有对照实验，说明自变量、因变量、两个控制变量及为何重复。',answer:'自变量为光强水平，设置低 / 无光对照与其他光强（1）；因变量可为单位时间净O2变化并带单位（1）；控制温度、CO2供应、同种同大小材料等至少两个（1）；每组多个独立生物重复，降低随机误差并估计变异（1）。注意无光时可测得呼吸耗氧，不能直接称总光合。'}]};
+let tickId=null;
+function activeTime(){const m=state.mock;return !m?900:m.running?Math.max(0,Math.ceil((m.deadline-Date.now())/1000)):m.remaining}
+function renderClock(){let m=state.mock,sec=activeTime();$('clock').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');$('timerStatus').textContent=!m?'未开始 · 开始后显示题目':m.finished?'已结束 · 可查看解析并自评':m.running?'进行中 · 作答草稿自动保存':'已暂停 · 点击继续';$('pauseMock').disabled=!m||m.finished;$('finishMock').disabled=!m||m.finished;$('pauseMock').textContent=m&&m.running?'暂停':'继续';if(m&&m.running&&sec===0)finishMock(true)}
+function renderPaper(){const m=state.mock;$('mockAnswers').hidden=!m||!m.finished;if(!m)return;const s=m.type.startsWith('stat')?'stat':'bio';if(m.type.endsWith('mini')){$('mockPaper').innerHTML='<span class="badge">本站原创 · '+(s==='stat'?'统计':'生物')+'短卷 · 3选择+1简答 · 共7分</span>'+mini[s].map((q,i)=>'<div class="mockitem"><b>'+(i+1)+'. '+q.q+'</b>'+(q.choices?q.choices.map((c,j)=>'<label><input type="radio" name="answer-'+i+'" data-answer="'+i+'" value="'+j+'" '+(String(m.answers[i])===String(j)?'checked':'')+' '+(m.finished?'disabled':'')+'> '+String.fromCharCode(65+j)+'. '+c+'</label>').join(''):'<textarea aria-label="第4题作答" data-answer="'+i+'" '+(m.finished?'disabled':'')+'>'+esc(m.answers[i]||'')+'</textarea>')+'</div>').join('');if(m.finished){const correct=mini[s].slice(0,3).filter((q,i)=>Number(m.answers[i])===q.a&&m.answers[i]!==undefined).length;$('mockAnswers').innerHTML='<h3>解析与自评 · 原创短卷</h3><p>选择题自动核对：'+correct+'/3；简答按4个要点自评（0–4）。满分共7分。</p>'+mini[s].map((q,i)=>'<p><b>'+(i+1)+'.</b> '+(q.why||q.answer)+'</p>').join('');$('scoreSubject').value=s;$('scoreName').value='原创'+(s==='stat'?'统计':'生物')+'短卷';$('scoreMax').value=7;$('scoreGot').value='';}}else{$('mockPaper').innerHTML='<h3>外部自组'+(s==='stat'?'统计':'生物')+(m.type.endsWith('mc')?' MCQ':' FRQ')+'计时</h3><p>本模式不内置完整试卷，请使用已备好的原创 / 教师授权题组。'+(m.type.endsWith('mc')?(s==='stat'?'42':'60')+'题，90分钟。':(s==='stat'?'4题，40分':'6题，34分')+'，90分钟。')+'</p><label>卷名 / 复盘草稿<textarea data-answer="notes" '+(m.finished?'disabled':'')+'>'+esc(m.answers.notes||'')+'</textarea></label>';if(m.finished){$('mockAnswers').innerHTML='<h3>计时结束</h3><p>按你所用题卷的合法评分标准批改。本站不能自动给外部试卷判分。把得分与关键改进记录到下方日志。</p>';$('scoreSubject').value=s;$('scoreGot').value='';$('scoreName').value='外部自组'+(s==='stat'?'统计':'生物')+(m.type.endsWith('mc')?'MCQ':'FRQ');$('scoreMax').value=m.type.endsWith('mc')?(s==='stat'?42:60):(s==='stat'?40:34)}}renderClock()}
+function finishMock(auto=false){if(!state.mock||state.mock.finished)return;state.mock.remaining=auto?0:activeTime();state.mock.running=false;state.mock.finished=true;save();renderPaper()}
+function showTab(id){document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!==id);document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===id);b.setAttribute('aria-pressed',b.dataset.tab===id)});}
+document.querySelector('nav').addEventListener('click',e=>{if(e.target.dataset.tab)showTab(e.target.dataset.tab)});
+$('startDate').addEventListener('change',e=>{if(!e.target.value||!e.target.validity.valid)return;state.start=e.target.value;save();renderPlan()});$('hideDone').onchange=renderPlan;$('weeks').addEventListener('change',e=>{if(!e.target.dataset.task)return;state.done[e.target.dataset.task]=e.target.checked;save();renderPlan()});$('jumpWeek').onclick=()=>{const n=Math.max(0,Math.min(15,currentWeek()));$('hideDone').checked=false;renderPlan();$('week-'+n).scrollIntoView({behavior:'smooth',block:'start'})};$('subjectFilter').onchange=renderUnits;
+$('exportData').onclick=()=>{const b=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),data:state},null,2)],{type:'application/json'}),url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download='ap-stat-bio-progress-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+$('startMock').onclick=()=>{if(state.mock&&!state.mock.finished&&!confirm('重新开始会替换当前计时与作答草稿；已保存成绩不会删除。继续？'))return;const type=$('mockSelect').value,seconds=type.endsWith('mini')?900:5400;state.mock={type,remaining:seconds,deadline:Date.now()+seconds*1000,running:true,finished:false,answers:{}};save();renderPaper()};$('pauseMock').onclick=()=>{let m=state.mock;if(!m||m.finished)return;if(m.running){m.remaining=activeTime();m.running=false}else{m.deadline=Date.now()+m.remaining*1000;m.running=true}save();renderClock()};$('finishMock').onclick=()=>{if(confirm('现在交卷并展开解析？交卷后不能修改此卷答案。'))finishMock()};$('mockPaper').addEventListener('input',e=>{if(!state.mock||state.mock.finished||!e.target.dataset.answer)return;state.mock.answers[e.target.dataset.answer]=e.target.value;save()});
+$('scoreForm').onsubmit=e=>{e.preventDefault();let got=Number($('scoreGot').value),max=Number($('scoreMax').value);if(!Number.isFinite(got)||!Number.isFinite(max)||max<=0||got<0||got>max){alert('请检查：得分须在0与满分之间。');return}state.scores.push({date:new Date().toLocaleDateString('zh-CN'),subject:$('scoreSubject').value,name:$('scoreName').value.trim(),got,max,note:$('scoreNote').value.trim()});save();renderScores();$('scoreNote').value=''};
+$('frqLinks').innerHTML='<div class="tablewrap"><table><tr><th>年份</th><th>统计：题目 + 评分</th><th>生物：题目 + 评分</th><th>使用提醒</th></tr>'+[2023,2024,2025,2026].map(y=>'<tr><td>'+y+'</td><td><a target="_blank" rel="noopener" href="https://apcentral.collegeboard.org/courses/ap-statistics/exam/past-exam-questions">'+y+' 官方FRQ / Scoring入口 ↗</a></td><td><a target="_blank" rel="noopener" href="https://apcentral.collegeboard.org/courses/ap-biology/exam/past-exam-questions">'+y+' 官方FRQ / Scoring入口 ↗</a></td><td>展开 '+y+' 年栏目；统计旧卷非新版整卷'+(y<2026?'；生物对照Fall2025 CED':'')+'</td></tr>').join('')+'</table></div>';
+renderPlan();renderUnits();renderScores();save();if(state.mock){$('mockSelect').value=state.mock.type;renderPaper()}renderClock();tickId=setInterval(renderClock,1000);
+</script></body></html>
